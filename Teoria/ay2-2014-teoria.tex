@@ -1,0 +1,254 @@
+\documentclass[compress]{beamer}
+
+\mode<presentation>
+{
+  %\usetheme{Warsaw}
+  %\usecolortheme{spruce}
+  % or ...
+	%\useoutertheme{infolines}
+  %\setbeamercovered{transparent}
+  
+  \usetheme{CambridgeUS}
+    \setbeamercolor{item projected}{bg=darkred}
+    \setbeamertemplate{enumerate items}[default]
+    \setbeamertemplate{navigation symbols}{}
+    \setbeamercovered{invisible}
+    \setbeamercolor{block title}{fg=darkred}
+    \setbeamercolor{local structure}{fg=darkred}
+  
+  % or whatever (possibly just delete it)
+}
+
+\usepackage{verbatim} 
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+\newcommand{\bigpause}{\bigskip \pause}
+
+\lstloadlanguages{C++}
+\lstnewenvironment{code}
+	{%\lstset{	numbers=none, frame=lines, basicstyle=\small\ttfamily, }%
+	 \csname lst@SetFirstLabel\endcsname}
+	{\csname lst@SaveFirstLabel\endcsname}
+\lstset{% general command to set parameter(s)
+	language=C++, basicstyle=\footnotesize\sffamily, keywordstyle=\slshape,
+	emph=[1]{tipo,usa}, emphstyle={[1]\sffamily\bfseries},
+	basewidth={0.47em,0.40em},
+	columns=fixed, fontadjust, resetmargins, xrightmargin=5pt, xleftmargin=15pt,
+	flexiblecolumns=false, tabsize=2, breaklines,	breakatwhitespace=false, extendedchars=true,
+	numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=9pt,
+	frame=l, framesep=3pt,
+}
+
+\usepackage[spanish]{babel}
+% or whatever
+
+\usepackage[utf8]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title[Computabilidad: Diagonalizaci\'on] % (optional, use only with long paper titles)
+{Diagonalizaci\'on}
+
+\author[Melanie Sclar] % (optional, use only with lots of authors)
+{~Melanie Sclar}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+\institute[UBA] % (optional, but mostly needed)
+{
+  %\inst{1}%
+  Facultad de Ciencias Exactas y Naturales\\
+  Universidad de Buenos Aires
+}
+%\date[TC 2014] % (optional, should be abbreviation of conference name)
+%{Training Camp 2014}
+
+% Ac¿ se puede insertar el logo de la UBA
+% \pgfdeclareimage[height=0.5cm]{university-logo}{university-logo-filename}
+% \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>{Contenidos}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+\newcommand{\be}{\begin{equation*}}
+\newcommand{\ee}{\end{equation*}}
+\newcommand{\state}[1]{\left|\,#1\,\right\rangle}
+\newcommand{\costate}[1]{\left\langle\,#1\,\right|}
+\newcommand{\trace}{\text{Tr}}
+\newcommand{\su}{\uparrow}
+\newcommand{\sd}{\downarrow}
+\newcommand{\im}{\text{Im}}
+\newcommand{\re}{\text{Re}}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command:
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Contenidos}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+
+\section{Repaso de conceptos}
+\subsection{$\mathcal{S}$-computabilidad}
+\begin{frame}
+\begin{itemize}
+\item En la \'ultima te\'orica vimos que el Halting Problem no es $\mathcal{S}$-computable. ¿Pero qu\'e significaba esto y c\'omo lo demostramos?
+\bigpause
+\invisible<1>{
+\item Una funci\'on $f$ es $\mathcal{S}$-parcial computable si existe un programa P que la computa. \\
+Formalmente, si existe P tal que $$f(r_1,\cdots,r_m) = \Psi^{(m)}_P (r_1,\ldots,r_m)$$
+para todo $(r_1,\ldots,r_m) \in \mathbb{R}^m$
+
+\item Una funci\'on $f$ es $\mathcal{S}$-computable si es $\mathcal{S}$-parcial computable y total.
+}
+\end{itemize}
+\end{frame}
+
+\subsection{El halting problem}
+\begin{frame}
+\begin{itemize}
+\item Intuitivamente, el \textbf{halting problem} (o problema de la parada) pregunta si es posible obtener un programa que responda en un n\'umero finito de pasos si un programa arbitrario con una entrada arbitraria terminar\'a de ejecutarse en un n\'umero finito de pasos o no. \\
+
+\item Formalmente, $$HALT(x,y) = \left\{
+\begin{array}{c l}
+ 1 & si\ \Psi_P(x) \downarrow\\
+ 0 & en\ otro\ caso
+\end{array}
+\right.
+$$
+donde $P$ es el \'unico programa tal que $\#P = y$.
+%\item La idea clave para la demostraci\'on era evaluar a HALT con su propio n\'umero de programa.
+
+\item Recordaremos la metodolog\'ia utilizada para demostrar la no computabilidad de este problema y extenderlo a la demostraci\'on de otros problemas similares.
+\end{itemize}
+\end{frame}
+
+\section{El ejercicio}
+\subsection{Enunciado}
+\begin{frame}
+\begin{block}{Ejercicio 1}
+Decidir si la siguiente funci\'on es computable o no (y demostrar).
+
+$$f(x) = \left\{
+\begin{array}{c l}
+ 3x & si\ \Phi_x(x) = x\\
+ 2x & en\ otro\ caso
+\end{array}
+\right.
+$$
+
+\end{block}
+\bigpause
+
+Primero que nada e intuitivamente, ¿piensan que es $\mathcal{S}$-computable?
+\bigskip
+
+Para que lo sea, debe ser parcial computable y total. \\
+$f$ es total pues est\'a definida en todo su dominio. ¿Es parcial computable?
+
+\end{frame}
+
+\subsection{Resoluci\'on}
+\begin{frame}
+\begin{itemize}
+\item Demostraremos que no es computable. Una idea muy utilizada para demostrar que una funci\'on no es computable es la \textbf{diagonalizaci\'on}.\\
+\bigskip
+\item Esta t\'ecnica consiste en asumir que la funci\'on es computable y generar una funci\'on parcial computable que falle sobre una entrada espec\'ifica (generalmente, el propio n\'umero de programa) y as\'i llegar a una contradicci\'on.
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+As\'i como en HALT, crearemos un programa que $cuelgue$ para alguna rama en particular de las del enunciado y para la otra no (y luego la evaluaremos en su propio n\'umero de programa).%(es importante no tomar esto como $receta$, porque cada problema es distinto -pero s\'i puede ser una t\'ecnica muy \'util).
+\bigpause
+
+\invisible<1>{
+Supongamos que P es un programa que computa $f$.
+	\begin{table}[h]
+	\begin{tabular}{|l l l|}
+	\hline
+	Q: &         & P                      \\
+	   &         & Y $\leftarrow$ Y - 2X \\
+	   & {[}R{]} & IF Y $\neq$ 0 GOTO R         \\
+	   &         & Y $\leftarrow$ 1             \\ 
+	\hline
+	\end{tabular}
+	\end{table}
+
+Nota: R es una etiqueta fresca.
+}
+\end{frame}
+
+\begin{frame}
+Pensemos qu\'e funci\'on computa este programa Q, para poder analizarlo mejor luego.
+\bigpause
+\invisible<1> {
+$$g(x) = \left\{
+\begin{array}{c l}
+ \uparrow & si\ f(x) = 3x \wedge x > 0\\
+ 1 & en\ otro\ caso
+\end{array}
+\right.
+$$
+}
+
+%% TENER CUIDADO CON EL CASO 0
+\end{frame}
+
+\begin{frame}
+
+Pensemos qu\'e sucede si el programa Q se $cuelga$ con una cierta entrada x:
+
+$\Psi_Q(x) \uparrow \ \ \ \Leftrightarrow  \ \   \Psi_P(x) \neq 2x \ \ \wedge \ \ x > 0 $ \\
+$\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \Leftrightarrow  \ \   \Psi_P(x) = 3x \ \ \wedge \ \ x > 0 $ \\
+$\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \Leftrightarrow  \ \   \Phi_x(x) = x \ \ \wedge \ \ x > 0 $ \\
+
+\bigpause
+Sea $e = \#Q$. Sabemos que $e > 0$ (recordar codificaci\'on de programas de la clase anterior). \\
+
+\bigpause
+Luego, como $\Phi_e(x) = \Psi_Q(x)$, y evaluando en $x = e$ tenemos que: \\
+
+\bigpause
+$\Phi_e(e) \uparrow \Leftrightarrow \Phi_e(e) = e \ \ \wedge \ \ e > 0 $ \\
+$\Phi_e(e) \uparrow \Leftrightarrow \Phi_e(e) = e $. ¡Contradicci\'on! \\
+
+Esta contradicci\'on provino de suponer que $f$ era computable. Por lo tanto, concluimos que $f$ no es $\mathcal{S}$-computable.
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\Huge ¿Preguntas? % PONER REFERENCIAS
+\end{center}
+\end{frame}
+
+
+\end{document}
